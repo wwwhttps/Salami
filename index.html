@@ -6,61 +6,41 @@
     <title>Eid Salami - Md. Zannat Nayem Talukder</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
-        :root { --gold: #d4af37; --navy: #001f3f; --crimson: #b21f1f; }
+        :root { --gold: #d4af37; --navy: #001f3f; }
         body {
             background: #000a14; color: white; font-family: 'Segoe UI', Arial, sans-serif;
-            display: flex; flex-direction: column; align-items: center; padding: 20px;
-            margin: 0; min-height: 100vh;
+            display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; min-height: 100vh;
         }
-        .dev-badge { 
-            color: var(--gold); font-weight: bold; border: 1px solid var(--gold); 
-            padding: 6px 15px; border-radius: 20px; font-size: 0.85rem; 
-            margin-bottom: 15px; background: rgba(212, 175, 55, 0.1);
+        /* Overlay to fix FB Browser Audio block */
+        #overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,10,20,0.95); z-index: 100; display: flex;
+            flex-direction: column; justify-content: center; align-items: center;
         }
-        h1 { margin: 0; color: var(--gold); letter-spacing: 1px; }
-
-        .wheel-container { position: relative; margin: 25px 0; }
+        .dev-badge { color: var(--gold); border: 1px solid var(--gold); padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; margin-bottom: 10px; }
+        
+        .wheel-container { position: relative; margin: 20px 0; }
         #wheel { 
             border: 6px solid var(--gold); border-radius: 50%; 
-            /* Agonizingly slow stop for "fear" factor */
             transition: transform 9s cubic-bezier(0.15, 0, 0.15, 1);
-            background: #111; box-shadow: 0 0 40px rgba(0,0,0,0.8);
+            background: #111;
         }
-        .pointer { 
-            position: absolute; top: -15px; left: 50%; transform: translateX(-50%); 
-            width: 0; height: 0; border-left: 18px solid transparent; 
-            border-right: 18px solid transparent; border-top: 35px solid #ff4757; 
-            z-index: 10; filter: drop-shadow(0 2px 5px black);
-        }
+        .pointer { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 18px solid transparent; border-right: 18px solid transparent; border-top: 35px solid #ff4757; z-index: 10; }
 
-        input { 
-            padding: 12px; width: 85%; max-width: 300px; margin-bottom: 12px; 
-            border-radius: 8px; border: 2px solid var(--gold); background: #001f3f; 
-            color: white; text-align: center; font-size: 1rem; outline: none;
-        }
-        button { 
-            padding: 15px 45px; background: var(--gold); border: none; 
-            border-radius: 30px; font-weight: bold; cursor: pointer; 
-            font-size: 1.2rem; color: #001224; transition: 0.2s;
-        }
-        button:disabled { background: #444; color: #888; }
-
-        #voucher { 
-            display: none; background: white; color: #333; padding: 30px; 
-            border-radius: 12px; border-top: 10px solid var(--gold); 
-            margin-top: 25px; width: 90%; max-width: 400px;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.6); text-align: left;
-        }
-        .voucher-title { 
-            color: var(--gold); font-weight: 800; border-bottom: 1px solid #eee; 
-            padding-bottom: 10px; margin-bottom: 15px; text-align: center; font-size: 1.2rem;
-        }
-        .issuer-tag { font-size: 0.75rem; color: #777; margin-bottom: 5px; text-transform: uppercase; }
-
-        .footer { margin-top: auto; padding: 20px; font-size: 0.8rem; opacity: 0.6; }
+        input { padding: 12px; width: 80%; margin-bottom: 10px; border-radius: 8px; border: 2px solid var(--gold); background: #001f3f; color: white; text-align: center; }
+        .btn { padding: 15px 40px; background: var(--gold); border: none; border-radius: 30px; font-weight: bold; cursor: pointer; color: #001224; font-size: 1.1rem; }
+        
+        #voucher { display: none; background: white; color: #333; padding: 25px; border-radius: 12px; border-top: 10px solid var(--gold); margin-top: 20px; width: 90%; max-width: 400px; text-align: left; }
     </style>
 </head>
 <body>
+
+    <div id="overlay">
+        <div class="dev-badge">Md. Zannat Nayem Talukder, BUTEX</div>
+        <h2 style="color:var(--gold)">🌙 Eid Salami Pro</h2>
+        <p>Press Enter to Start</p>
+        <button class="btn" onclick="unlock()">ENTER APP</button>
+    </div>
 
     <div class="dev-badge">Developed by Md. Zannat Nayem Talukder, BUTEX</div>
     <h1>🌙 Eid Salami</h1>
@@ -69,65 +49,64 @@
         <input type="text" id="senior" placeholder="Senior's Name">
         <input type="text" id="junior" placeholder="Junior's Name">
         <br>
-        <button id="spinBtn">SPIN FOR SALAMI</button>
+        <button id="spinBtn" class="btn">SPIN WHEEL</button>
     </div>
 
     <div class="wheel-container">
         <div class="pointer"></div>
-        <canvas id="wheel" width="360" height="360"></canvas>
+        <canvas id="wheel" width="350" height="350"></canvas>
     </div>
 
     <div id="voucher">
-        <div class="issuer-tag">Official Issuer</div>
-        <div style="font-weight: bold; margin-bottom: 15px;">Md. Zannat Nayem Talukder</div>
-        <div class="voucher-title">SALAMI VOUCHER</div>
-        <div id="v-body" style="font-size: 1.1rem; line-height: 1.6;"></div>
-        <p style="font-size: 0.75rem; color: #888; margin-top: 20px; font-style: italic; text-align: center;">
-            *Screenshot and share with your senior!*
-        </p>
+        <div style="font-size: 0.7rem; color: #777;">OFFICIAL ISSUER: MD. ZANNAT NAYEM TALUKDER</div>
+        <h3 style="color:var(--gold); border-bottom:1px solid #eee; padding-bottom:10px;">SALAMI VOUCHER</h3>
+        <div id="v-body"></div>
     </div>
-
-    <div class="footer">Department of DCE, BUTEX</div>
 
 <script>
     const canvas = document.getElementById('wheel');
     const ctx = canvas.getContext('2d');
     const spinBtn = document.getElementById('spinBtn');
+    let rotation = 0;
 
+    // Items and weight
     const items = [
         { label: "0 TK (Sorry!)", w: 35, c: "#1a1a1a" },
         { label: "0.1 TK", w: 25, c: "#1a2a6c" },
         { label: "1 TK", w: 25, c: "#b21f1f" },
         { label: "2 TK", w: 25, c: "#fdbb2d" },
-        { label: "30 TK", w: 25, c: "#22c1c3" },
-        { label: "4 TK", w: 25, c: "#9a00d4" },
+        { label: "3 TK", w: 25, c: "#22c1c3" },
         { label: "5 TK", w: 20, c: "#e67e22" },
         { label: "10 TK", w: 15, c: "#2ecc71" },
         { label: "20 TK", w: 10, c: "#8e44ad" },
         { label: "50 TK", w: 6, c: "#D4AF37" }
     ];
-
     const totalW = items.reduce((s, i) => s + i.w, 0);
-    let rotation = 0;
+
+    function unlock() {
+        document.getElementById('overlay').style.display = 'none';
+        // Pre-warm the voice for FB browser
+        const silent = new SpeechSynthesisUtterance("");
+        window.speechSynthesis.speak(silent);
+    }
 
     function draw() {
         let currentAngle = 0;
-        ctx.clearRect(0,0,360,360);
+        ctx.clearRect(0,0,350,350);
         items.forEach(item => {
             const angle = (item.w / totalW) * 2 * Math.PI;
-            ctx.beginPath(); ctx.moveTo(180, 180);
-            ctx.arc(180, 180, 175, currentAngle, currentAngle + angle);
+            ctx.beginPath(); ctx.moveTo(175, 175);
+            ctx.arc(175, 175, 170, currentAngle, currentAngle + angle);
             ctx.fillStyle = item.c; ctx.fill();
-            ctx.strokeStyle = "rgba(255,255,255,0.3)"; ctx.lineWidth = 1; ctx.stroke();
-
-            ctx.save(); ctx.translate(180, 180); ctx.rotate(currentAngle + angle/2);
-            ctx.fillStyle = "white"; ctx.font = "bold 13px Arial";
-            ctx.fillText(item.label, 70, 5); ctx.restore();
+            ctx.strokeStyle = "rgba(255,255,255,0.2)"; ctx.stroke();
+            ctx.save(); ctx.translate(175, 175); ctx.rotate(currentAngle + angle/2);
+            ctx.fillStyle = "white"; ctx.font = "bold 12px Arial";
+            ctx.fillText(item.label, 60, 5); ctx.restore();
             currentAngle += angle;
         });
     }
 
-    function playSpinSound() {
+    function playTick() {
         const a = new (window.AudioContext || window.webkitAudioContext)();
         const o = a.createOscillator(); const g = a.createGain();
         o.connect(g); g.connect(a.destination);
@@ -138,26 +117,24 @@
     spinBtn.onclick = () => {
         const s = document.getElementById('senior').value.trim();
         const j = document.getElementById('junior').value.trim();
-        if(!s || !j) return alert("Please enter both names!");
+        if(!s || !j) return alert("Enter names!");
 
         const id = `salami_${s.toLowerCase()}_${j.toLowerCase()}`;
         if(localStorage.getItem(id)) {
-            alert("Already spun for this Senior! Loading previous result.");
             showVoucher(JSON.parse(localStorage.getItem(id)));
             return;
         }
 
-        const speech = new SpeechSynthesisUtterance("salami lagbe salamiiiiiii. Hui hui huiiiiii");
-        speech.lang = 'bn-BD'; speech.pitch = 1.3; speech.rate = 0.9;
-        window.speechSynthesis.speak(speech);
+        const voice = new SpeechSynthesisUtterance("salami lagbe salamiiiiiii. Hui hui huiiiiii");
+        voice.lang = 'bn-BD'; voice.pitch = 1.3;
+        window.speechSynthesis.speak(voice);
 
         spinBtn.disabled = true;
-        const spinAmount = Math.floor(Math.random() * 360) + 2880; // 8+ full rotations
-        rotation += spinAmount;
+        const spin = Math.floor(Math.random() * 360) + 2880;
+        rotation += spin;
         canvas.style.transform = `rotate(${rotation}deg)`;
 
-        let count = 0; 
-        const ticker = setInterval(() => { if(count++ < 60) playSpinSound(); else clearInterval(ticker); }, 140);
+        let c = 0; const t = setInterval(() => { if(c++ < 60) playTick(); else clearInterval(t); }, 140);
 
         setTimeout(() => {
             const deg = (360 - (rotation % 360) + 270) % 360;
@@ -174,7 +151,7 @@
                 cur += itemDeg;
             }
             spinBtn.disabled = false;
-        }, 9100); // Wait for the new 9s transition to finish
+        }, 9100);
     };
 
     function showVoucher(data) {
@@ -183,11 +160,10 @@
         document.getElementById('v-body').innerHTML = `
             <strong>Junior:</strong> ${data.j}<br>
             <strong>Senior:</strong> ${data.s}<br>
-            <strong>Salami:</strong> <span style="font-size:1.8rem; color:#b21f1f; font-weight:bold;">${data.a}</span><br>
-            <small>Date: ${data.d}</small>
+            <strong>Salami:</strong> <span style="color:#b21f1f; font-size:1.5rem; font-weight:bold;">${data.a}</span><br>
+            <small>${data.d}</small>
         `;
     }
-
     draw();
 </script>
 </body>
